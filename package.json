@@ -18,10 +18,12 @@
     "gsap": "^3.12.7",
     "howler": "^2.2.4",
     "idb": "^8.0.1",
+    "jszip": "^3.10.1",
     "nanoid": "^5.1.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.170.0",
+    "zundo": "^2.3.0",
     "zustand": "^5.0.2"
   },
   "devDependencies": {

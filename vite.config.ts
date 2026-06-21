@@ -12,6 +12,9 @@ export default defineConfig({
       '@presentation': path.resolve(__dirname, './src/presentation'),
     },
   },
+  server: {
+    host: '0.0.0.0',
+  },
   test: {
     globals: true,
     setupFiles: ['./src/__tests__/setup.ts'],

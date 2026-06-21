@@ -46,7 +46,7 @@ describe('palaceStore', () => {
 
 describe('uiStore', () => {
   beforeEach(() => {
-    useUIStore.setState({ activePanel: 'toolbar', editMode: false, recallMode: false })
+    useUIStore.setState({ activePanel: 'toolbar', editMode: false })
   })
 
   it('setActivePanel updates panel', () => {
@@ -57,10 +57,5 @@ describe('uiStore', () => {
   it('setEditMode toggles edit mode', () => {
     useUIStore.getState().setEditMode(true)
     expect(useUIStore.getState().editMode).toBe(true)
-  })
-
-  it('setRecallMode toggles recall mode', () => {
-    useUIStore.getState().setRecallMode(true)
-    expect(useUIStore.getState().recallMode).toBe(true)
   })
 })

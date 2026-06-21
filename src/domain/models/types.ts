@@ -8,4 +8,5 @@ export enum ElementType {
   ImagePlane = 'image-plane',
   Object3D = '3d-object',
   Segment = 'segment',
+  Text = 'text',
 }

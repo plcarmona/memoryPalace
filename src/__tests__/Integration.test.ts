@@ -84,7 +84,7 @@ describe('Integration: Full workflow', () => {
     await persistence.deletePalace('integration-test')
   })
 
-  it('recall flow: hide → reveal → assess cycle', () => {
+  it('content flow: hide → reveal → reveal all cycle', () => {
     const rootId = usePalaceStore.getState().addNode('Study Scene', null, [0, 0, 0])
 
     const elementUseCase = new ElementUseCase(

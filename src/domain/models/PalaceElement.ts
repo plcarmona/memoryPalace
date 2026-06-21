@@ -11,6 +11,14 @@ export interface SegmentData {
   boundingBox: [number, number, number, number]
 }
 
+export interface SegmentRegion {
+  id: string
+  boundingBox: [number, number, number, number]
+  label?: string
+  link?: ElementLink
+  linkedElementId?: string
+}
+
 export interface PalaceElement {
   id: ElementId
   type: ElementType
@@ -22,4 +30,7 @@ export interface PalaceElement {
   hiddenContent?: HiddenContent
   contentRevealed?: boolean
   segmentData?: SegmentData
+  segmentRegions?: SegmentRegion[]
+  groupId?: string
+  locked?: boolean
 }

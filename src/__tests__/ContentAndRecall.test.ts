@@ -2,7 +2,6 @@ import { PalaceNode, ElementType } from '../domain/models'
 import { ContentUseCase } from '../application/ContentUseCase'
 import { TreeService } from '../domain/tree/TreeService'
 import { usePalaceStore } from '../stores/palaceStore'
-import { useRecallStore } from '../stores/recallStore'
 
 describe('ContentUseCase — enhanced with reveal tracking', () => {
   function setup() {
@@ -108,66 +107,5 @@ describe('ContentUseCase — enhanced with reveal tracking', () => {
 
     const el = getNodes()[0].elements[0]
     expect(el.contentRevealed).toBe(true)
-  })
-})
-
-describe('recallStore', () => {
-  beforeEach(() => {
-    useRecallStore.setState({
-      isActive: false,
-      sceneOrder: [],
-      currentSceneIndex: 0,
-      answers: [],
-      waitingForAnswer: false,
-      currentRevealElementId: null,
-    })
-  })
-
-  it('startRecall sets active state with shuffled scenes', () => {
-    useRecallStore.getState().startRecall(['a', 'b', 'c'])
-    const state = useRecallStore.getState()
-
-    expect(state.isActive).toBe(true)
-    expect(state.sceneOrder).toHaveLength(3)
-    expect(state.sceneOrder.sort()).toEqual(['a', 'b', 'c'])
-    expect(state.answers).toEqual([])
-  })
-
-  it('nextScene advances the index', () => {
-    useRecallStore.getState().startRecall(['a', 'b', 'c'])
-    expect(useRecallStore.getState().currentSceneIndex).toBe(0)
-
-    useRecallStore.getState().nextScene()
-    expect(useRecallStore.getState().currentSceneIndex).toBe(1)
-  })
-
-  it('recordAnswer adds to answers array', () => {
-    useRecallStore.getState().recordAnswer('el-1', 'scene-1', true)
-    useRecallStore.getState().recordAnswer('el-2', 'scene-1', false)
-
-    const { answers } = useRecallStore.getState()
-    expect(answers).toHaveLength(2)
-    expect(answers[0].correct).toBe(true)
-    expect(answers[1].correct).toBe(false)
-  })
-
-  it('endRecall resets state', () => {
-    useRecallStore.getState().startRecall(['a', 'b'])
-    useRecallStore.getState().recordAnswer('el-1', 'a', true)
-    useRecallStore.getState().endRecall()
-
-    const state = useRecallStore.getState()
-    expect(state.isActive).toBe(false)
-    expect(state.sceneOrder).toEqual([])
-    // answers preserved for summary
-    expect(state.answers).toHaveLength(1)
-  })
-
-  it('setCurrentRevealElement tracks which element was revealed', () => {
-    useRecallStore.getState().setCurrentRevealElement('el-1')
-    expect(useRecallStore.getState().currentRevealElementId).toBe('el-1')
-
-    useRecallStore.getState().setCurrentRevealElement(null)
-    expect(useRecallStore.getState().currentRevealElementId).toBeNull()
   })
 })

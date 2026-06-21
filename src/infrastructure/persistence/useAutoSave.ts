@@ -43,6 +43,8 @@ export function useLoadPalace() {
       } else {
         usePalaceStore.setState({ isLoaded: true })
       }
+      // Clear undo history so users can't undo back into pre-load state
+      usePalaceStore.temporal.getState().clear()
     }
     load()
   }, [])

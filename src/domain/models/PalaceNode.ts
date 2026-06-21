@@ -11,6 +11,7 @@ export interface PalaceNode {
   label: string
   parentId: NodeId | null
   position: Vec3
+  scale?: number
   elements: PalaceElement[]
   metadata: NodeMetadata
   thumbnail?: string

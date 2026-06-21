@@ -3,7 +3,7 @@ import { customAlphabet } from 'nanoid'
 
 const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 12)
 
-const DEFAULT_ENDPOINT = 'http://localhost:8000'
+const DEFAULT_ENDPOINT = `http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:8000`
 const TIMEOUT = 60_000
 
 interface SAMMask {

@@ -71,4 +71,43 @@ export class TreeService {
     layoutLevel(rootNodes, 0)
     return layout
   }
+
+  static getNodesWithinDistance(nodes: PalaceNode[], startId: NodeId, maxDistance: number): PalaceNode[] {
+    if (maxDistance <= 0) {
+      const self = nodes.find(n => n.id === startId)
+      return self ? [self] : []
+    }
+
+    const adj = new Map<NodeId, NodeId[]>()
+    for (const node of nodes) {
+      const neighbors: NodeId[] = []
+      if (node.parentId) neighbors.push(node.parentId)
+      for (const child of nodes) {
+        if (child.parentId === node.id) neighbors.push(child.id)
+      }
+      adj.set(node.id, neighbors)
+    }
+
+    const visited = new Set<NodeId>([startId])
+    const result: PalaceNode[] = []
+    let frontier: NodeId[] = [startId]
+
+    for (let dist = 0; dist <= maxDistance; dist++) {
+      const nextFrontier: NodeId[] = []
+      for (const id of frontier) {
+        const node = nodes.find(n => n.id === id)
+        if (node) result.push(node)
+        const neighbors = adj.get(id) || []
+        for (const neighborId of neighbors) {
+          if (!visited.has(neighborId)) {
+            visited.add(neighborId)
+            nextFrontier.push(neighborId)
+          }
+        }
+      }
+      frontier = nextFrontier
+    }
+
+    return result
+  }
 }

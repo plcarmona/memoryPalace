@@ -10,7 +10,7 @@ import { ElementType } from '../domain/models'
 describe('MemoryPanel', () => {
   beforeEach(() => {
     usePalaceStore.setState({ nodes: [], currentSceneId: null, selectedElementId: null })
-    useUIStore.setState({ activePanel: 'none', editMode: false, recallMode: false })
+    useUIStore.setState({ activePanel: 'none', editMode: false })
   })
 
   it('returns null when panel is not memory-panel', () => {

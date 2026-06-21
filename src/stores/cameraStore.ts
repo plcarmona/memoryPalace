@@ -1,56 +1,87 @@
 import { create } from 'zustand'
-import { Vec3, NodeId, PalaceNode } from '../domain/models'
-import { NavigationUseCase } from '../application/NavigationUseCase'
+import { NodeId } from '../domain/models'
 import { usePalaceStore } from './palaceStore'
 
-type CameraMode = 'overview' | 'focused' | 'transitioning'
+export interface Viewport {
+  x: number
+  y: number
+  zoom: number
+}
 
 interface CameraState {
-  mode: CameraMode
-  targetPosition: Vec3
-  targetLookAt: Vec3
+  viewport: Viewport
+  targetViewport: Viewport
+  animating: boolean
+  savedViewports: Record<string, Viewport>
 
-  focusNode: (nodeId: NodeId) => void
-  showOverview: () => void
+  navigateToScene: (nodeId: NodeId) => void
+  goHome: () => void
   navigateToLinkedElement: (elementId: string) => void
-  setMode: (mode: CameraMode) => void
+  setViewport: (x: number, y: number, zoom: number) => void
+  finishAnimation: () => void
+  saveCurrentViewport: (nodeId: string, viewport: Viewport) => void
 }
 
-function createNavUseCase(
-  getNodes: () => PalaceNode[],
-  set: (partial: Partial<CameraState>) => void
-): NavigationUseCase {
-  return new NavigationUseCase(
-    getNodes,
-    (target) => {
-      set({
-        mode: 'transitioning',
-        targetPosition: target.position,
-        targetLookAt: target.lookAt,
-      })
-      setTimeout(() => set({ mode: target.mode }), 500)
+function getNodeViewport(nodes: ReturnType<typeof usePalaceStore.getState>['nodes'], nodeId: string, savedViewports: Record<string, Viewport>): Viewport {
+  const saved = savedViewports[nodeId]
+  if (saved) return saved
+  const node = nodes.find(n => n.id === nodeId)
+  return { x: node?.position[0] ?? 0, y: node?.position[1] ?? 0, zoom: 1 }
+}
+
+export const useCameraStore = create<CameraState>((set, get) => ({
+  viewport: { x: 0, y: 0, zoom: 1 },
+  targetViewport: { x: 0, y: 0, zoom: 1 },
+  animating: false,
+  savedViewports: {},
+
+  navigateToScene: (nodeId) => {
+    const { viewport, savedViewports } = get()
+    const currentId = usePalaceStore.getState().currentSceneId
+    if (currentId) {
+      get().saveCurrentViewport(currentId, viewport)
     }
-  )
-}
 
-export const useCameraStore = create<CameraState>((set) => ({
-  mode: 'overview',
-  targetPosition: [0, 50, 50],
-  targetLookAt: [0, 0, 0],
-
-  focusNode: (nodeId) => {
     usePalaceStore.getState().setCurrentScene(nodeId)
-    createNavUseCase(() => usePalaceStore.getState().nodes, set).focusNode(nodeId)
+    const nodes = usePalaceStore.getState().nodes
+    const target = getNodeViewport(nodes, nodeId, savedViewports)
+
+    set({ targetViewport: target, animating: true })
   },
 
-  showOverview: () => {
-    usePalaceStore.getState().setCurrentScene(null)
-    createNavUseCase(() => usePalaceStore.getState().nodes, set).showOverview()
+  goHome: () => {
+    const root = usePalaceStore.getState().nodes.find(n => n.parentId === null)
+    if (root) {
+      get().navigateToScene(root.id)
+    }
   },
 
   navigateToLinkedElement: (elementId) => {
-    createNavUseCase(() => usePalaceStore.getState().nodes, set).navigateToLinkedElement(elementId)
+    const nodes = usePalaceStore.getState().nodes
+    for (const node of nodes) {
+      const element = node.elements.find(e => e.id === elementId)
+      if (element?.link?.targetNodeId) {
+        get().navigateToScene(element.link.targetNodeId)
+        return
+      }
+    }
   },
 
-  setMode: (mode) => set({ mode }),
+  setViewport: (x, y, zoom) => set({ viewport: { x, y, zoom } }),
+
+  finishAnimation: () => {
+    set({
+      viewport: { ...get().targetViewport },
+      animating: false,
+    })
+  },
+
+  saveCurrentViewport: (nodeId, viewport) => {
+    set({
+      savedViewports: {
+        ...get().savedViewports,
+        [nodeId]: { ...viewport },
+      },
+    })
+  },
 }))
