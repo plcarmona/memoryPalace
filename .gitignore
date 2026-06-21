@@ -6,6 +6,19 @@ package-lock.json
 dist/
 build/
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
 # Logs
 *.log
 npm-debug.log*
@@ -27,3 +40,8 @@ coverage/
 
 # Opencode
 .opencode/
+
+# Demo data (downloaded/generated files, not source)
+demosnap/data/
+demosnap/*.zip
+demosnap/*.txt
