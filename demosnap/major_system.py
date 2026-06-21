@@ -42,7 +42,7 @@ from typing import Dict, Iterable, List, Tuple
 # Paths
 # ---------------------------------------------------------------------------
 SCRIPT_DIR = Path(__file__).resolve().parent
-DATA_DIR = SCRIPT_DIR / "data"
+DATA_DIR = SCRIPT_DIR / ""
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 EN_FILE = DATA_DIR / "english_words.txt"
@@ -58,18 +58,17 @@ FREE_LETTERS = set("aeiouhwy")
 
 # Direct letter → digit mapping for letters that don't have soft/hard variants
 LETTER_DIGITS = {
-    "s": "0", "z": "0", "c": None,  # c handled contextually (soft=0, hard=7)
+    "s": "0", "z": "0",  # c handled contextually (soft=0, hard=7)
     "t": "1", "d": "1",
     "n": "2",
     "m": "3",
     "r": "4",
     "l": "5",
-    "g": None,                      # g handled contextually (soft=6, hard=7)
+    "g": "6",                      # g handled contextually (soft=6, hard=7)
     "j": "6",
-    "k": "7", "q": "7",
+    "k": "7", "q": "7", "c":"7",
     "f": "8", "v": "8",
     "p": "9", "b": "9",
-    "x": "70",                      # x ≈ ks
     "ñ": "2",                       # Spanish eñe → n-sound
 }
 
@@ -114,11 +113,11 @@ def word_to_digits(word: str) -> str:
             continue
 
         if ch == "c":
-            out.append("0" if _is_soft(ch, nxt) else "7")
+            out.append("7")
             i += 1
             continue
         if ch == "g":
-            out.append("6" if _is_soft(ch, nxt) else "7")
+            out.append("6")
             i += 1
             continue
 
