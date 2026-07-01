@@ -41,6 +41,10 @@ coverage/
 # Opencode
 .opencode/
 
+# Project tracking docs (local-only)
+ARCHITECTURE.md
+TASKS.md
+
 # Demo data (downloaded/generated files, not source)
 demosnap/data/
 demosnap/*.zip
